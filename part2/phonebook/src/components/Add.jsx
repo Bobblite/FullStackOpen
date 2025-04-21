@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-const Add = ({persons, setPersons, setShowPersons}) => {
+const Add = ({persons, setPersons, filterAndSet}) => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
 
@@ -20,9 +20,9 @@ const Add = ({persons, setPersons, setShowPersons}) => {
         }
         const newPersons = persons.concat(personObject)
         setPersons(newPersons)
-        setShowPersons(newPersons)
         setNewName('')
         setNewNumber('')
+        filterAndSet(persons=newPersons)
     }
     const handleNameChange = (event) => {
         setNewName(event.target.value)

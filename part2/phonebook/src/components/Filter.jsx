@@ -1,18 +1,9 @@
 import {useState} from 'react'
 
-const Filter = ({persons, setShowPersons}) => {
-    const [newFilter, setNewFilter] = useState('')
-
+const Filter = ({newFilter, setNewFilter, persons, filterAndSet}) => {
     const handleFilterChange = (event) => {
-        const filter = event.target.value
-        setNewFilter(filter)
-
-        if (filter === '') {
-            setShowPersons([...persons])
-            return
-        }
-
-        setShowPersons(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
+        setNewFilter(event.target.value)
+        filterAndSet(persons, event.target.value )
     }
     
 

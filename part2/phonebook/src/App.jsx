@@ -1,23 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+
 import Filter from './components/Filter'
 import Add from './components/Add'
 import Display from './components/Display'
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [showPersons, setShowPersons] = useState([...persons])
+  const [newFilter, setNewFilter] = useState('')
+
+  // Helper function to set display whenever filter/add
+  const filterAndSet = (persons, filter=newFilter) => {
+    if (filter === '') {
+      setShowPersons([...persons])
+      return
+    }
+
+    setShowPersons(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
+  }
+
+  // GET data and use as initial data
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+        setShowPersons(response.data)
+      })
+  }, [])
   
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter persons={persons} setShowPersons={setShowPersons} />
-      <Add persons={persons} setPersons={setPersons} setShowPersons={setShowPersons} />
+      <Filter newFilter={newFilter} setNewFilter={setNewFilter} persons={persons} filterAndSet={filterAndSet} />
+      <Add persons={persons} setPersons={setPersons} filterAndSet={filterAndSet} />
       <Display showPersons={showPersons} />
     </div>
   )
