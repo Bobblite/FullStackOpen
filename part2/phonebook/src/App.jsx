@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebookService from './services/phonebook'
 
 import Filter from './components/Filter'
 import Add from './components/Add'
@@ -23,20 +23,41 @@ const App = () => {
 
   // GET data and use as initial data
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        setShowPersons(response.data)
+    phonebookService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+        setShowPersons(initialPersons)
       })
   }, [])
+
+  // Helper function to create new person
+  const handleCreate = (personObject) => {
+    phonebookService
+      .create(personObject)
+      .then(returnedPerson => {
+        const newPersons = persons.concat(returnedPerson)
+        setPersons(newPersons)
+        filterAndSet(newPersons)
+      })
+  }
+
+  const handleUpdate = (id, personObject) => {
+    phonebookService
+      .update(id, personObject)
+      .then(returnedPerson => {
+        const newPersons = persons.map(person => person.id === id ? returnedPerson : person)
+        setPersons(newPersons)
+        filterAndSet(newPersons)
+      })
+  }
   
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} setNewFilter={setNewFilter} persons={persons} filterAndSet={filterAndSet} />
-      <Add persons={persons} setPersons={setPersons} filterAndSet={filterAndSet} />
-      <Display showPersons={showPersons} />
+      <Add persons={persons} handleCreate={handleCreate} handleUpdate={handleUpdate} />
+      <Display showPersons={showPersons} persons={persons} setPersons={setPersons} filterAndSet={filterAndSet} />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import {useState} from 'react'
+import phonebookService from '../services/phonebook'
 
-const Add = ({persons, setPersons, filterAndSet}) => {
+const Add = ({persons, handleCreate, handleUpdate}) => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
 
@@ -9,20 +10,23 @@ const Add = ({persons, setPersons, filterAndSet}) => {
 
         const found = persons.find(x => x.name === newName)
         if (found) {
-        alert(`${newName} is already added to phonebook`)
-        return
+            if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+                console.log(found.id, found.name)
+                handleUpdate(found.id, {...found, number: newNumber})
+                setNewName('')
+                setNewNumber('')
+            }
+            return
         }
 
         const personObject = {
         name: newName,
-        number: newNumber,
-        id: persons.length + 1
+        number: newNumber
         }
-        const newPersons = persons.concat(personObject)
-        setPersons(newPersons)
+
+        handleCreate(personObject)
         setNewName('')
         setNewNumber('')
-        filterAndSet(persons=newPersons)
     }
     const handleNameChange = (event) => {
         setNewName(event.target.value)
