@@ -1,15 +1,23 @@
 import Person from './Person'
 import phonebookService from '../services/phonebook'
 
-const Display = ({showPersons, persons, setPersons, filterAndSet}) => {
+const Display = ({showPersons, persons, setPersons, filterAndSet, setError, setMessage}) => {
     const handleDelete = (id, name) => {
         if (window.confirm(`Delete ${name}?`)) {
             phonebookService
                 .remove(id)
                 .then(removedPerson => {
-                const newPersons = persons.filter(person => person.id !== removedPerson.id)
-                setPersons(newPersons)
-                filterAndSet(newPersons)
+                    if (removedPerson == null) {
+                        setError(true)
+                        setMessage(`Information of ${name} has already been removed from server`)
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
+                    }
+
+                    const newPersons = persons.filter(person => person.id !== removedPerson.id)
+                    setPersons(newPersons)
+                    filterAndSet(newPersons)
                 })
             }
         }
