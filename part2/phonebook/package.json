@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:ui": "rm -rf dist && npm run build && cp -r dist ../../../FullStackOpen_Backend/phonebook",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "npx json-server --port 3001 db.json"
